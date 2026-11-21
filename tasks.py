@@ -19,6 +19,7 @@ CONFIG = {
     # Diretório de saída do site
     "deploy_path": HERE / "publish",
     # Configuração do GitHub Pages
+    "github_remote": "upstream",
     "github_pages_branch": "gh-pages",
     "commit_message": f"'Publica site em {datetime.date.today().isoformat()}'",
     # Host e porta para `serve`
@@ -67,7 +68,7 @@ def gh_pages(c):
     """Gera o site e publica no GitHub Pages."""
     build(c)
     c.run(
-        "ghp-import -n -b {github_pages_branch} "
+        "ghp-import -n -r {github_remote} -b {github_pages_branch} "
         "-m {commit_message} "
         "{deploy_path} -p".format(**CONFIG)
     )
