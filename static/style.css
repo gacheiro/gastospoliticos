@@ -74,9 +74,12 @@ main { padding: 32px 0 48px; }
 a.ranking__item:hover .ranking__nome { text-decoration: underline; text-decoration-color: var(--destaque); }
 
 .barra { position: relative; height: 22px; background: #f1f1f1; border: 2px solid var(--tinta); }
-.barra__preenchimento { position: absolute; inset: 0 auto 0 0; background: var(--destaque); }
+.barra__preenchimento { position: absolute; inset: 0 auto 0 0; width: var(--p); background: var(--destaque); }
 .barra__valor { position: relative; padding: 0 6px; font-size: 13px; font-weight: 900; line-height: 18px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* Cópia branca do texto, visível só sobre o preenchimento rosa. */
+.barra__valor--sobre { position: absolute; inset: 0; color: var(--branco); clip-path: inset(0 calc(100% - var(--p)) 0 0); }
 .barra--clara .barra__preenchimento { background: var(--amarelo); }
+.barra--clara .barra__valor--sobre { color: var(--tinta); }
 
 /* Foto */
 .foto { width: 48px; height: 48px; border: 2px solid var(--tinta); border-radius: 50%; object-fit: cover; object-position: top; background: var(--azul); }
