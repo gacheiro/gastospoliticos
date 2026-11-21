@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Gastos-dos-Politicos"
+version = "0.1.0a0"
+description = "A short description of your package"
+authors = [{ name = "Thiago J. Barbalho", email = "thagojobson@gmail.com" }]
+readme = "README.md"
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "invoke>=2.2.0,<3.0.0",
+    "pandas>=2.2.3,<3.0.0",
+    "jinja2>=3.1.0,<4.0.0",
+    "requests>=2.32.3,<3.0.0",
+]
+
+[project.urls]
+"Homepage" = "https://your-project-homepage.com"
+"Bug Tracker" = "https://your-project-bug-tracker.com"
+"Source Code" = "https://your-project-source-code.com"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+    "pandas-stubs",
+    "types-requests",
+    "ghp-import",
+]
+
+[project.scripts]
+# my-script = "my_package.module:function"
+
+[tool.setuptools.packages.find]
+include = ["gastospoliticos*"]
+
+[tool.setuptools.package-data]
+"gastospoliticos.site" = ["templates/*.html"]
