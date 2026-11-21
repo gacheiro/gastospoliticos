@@ -8,10 +8,14 @@
 {%- endmacro %}
 
 
+{# O texto aparece duas vezes: escuro sobre o fundo cinza e uma cópia branca
+   recortada (clip-path) na largura do preenchimento, então cada parte do
+   texto fica legível sobre a cor que está atrás dela. #}
 {% macro barra(valor, maximo, texto, classe="") -%}
-<div class="barra {{ classe }}">
-    <div class="barra__preenchimento" style="width: {{ valor|porcentagem(maximo) }}%"></div>
+<div class="barra {{ classe }}" style="--p: {{ valor|porcentagem(maximo) }}%">
+    <div class="barra__preenchimento"></div>
     <div class="barra__valor">{{ texto }}</div>
+    <div class="barra__valor barra__valor--sobre" aria-hidden="true">{{ texto }}</div>
 </div>
 {%- endmacro %}
 

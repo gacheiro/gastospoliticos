@@ -4,6 +4,7 @@ Tudo é calculado com pandas a partir dos DataFrames exportados da API,
 uma única vez por build.
 """
 
+import re
 from dataclasses import dataclass, field
 
 import pandas as pd
@@ -27,7 +28,7 @@ def preparar_gastos(df: pd.DataFrame) -> pd.DataFrame:
 def normalizar_tipo(tipo: str) -> str:
     """'COMBUSTÍVEIS E LUBRIFICANTES.' -> 'Combustíveis e lubrificantes'."""
     tipo = str(tipo).strip().rstrip(".").strip()
-    tipo = tipo.replace(" ,", ",")
+    tipo = re.sub(r"\s*,\s*", ", ", tipo)  # "HOSPEDAGEM ,EXCETO" -> "HOSPEDAGEM, EXCETO"
     return tipo[:1].upper() + tipo[1:].lower()
 
 
