@@ -4,6 +4,8 @@ import logging
 import typing as t
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("APIDadosAbertos")
@@ -16,6 +18,10 @@ URL_BASE = "https://dadosabertos.camara.leg.br/api/v2"
 # apenas os últimos meses. Ver:
 # https://github.com/CamaraDosDeputados/dados-abertos/issues/383
 LEGISLATURA_ATUAL = 57
+
+# Tempo máximo (s) de espera por resposta da API.
+TIMEOUT = 30
+
 HEADERS = {
     "accept": "application/json",
     "User-Agent": "GastosPolíticos/1.0",
@@ -36,13 +42,21 @@ class CamaraDadosAbertos:
         self.headers = headers or HEADERS
         self.session = session or requests.Session()
         self.session.headers.update(self.headers)
+        # Repete requisições que falham por instabilidade da API.
+        retry = Retry(
+            total=5,
+            backoff_factor=1,
+            status_forcelist=(429, 500, 502, 503, 504),
+            allowed_methods=("GET",),
+        )
+        self.session.mount("https://", HTTPAdapter(max_retries=retry))
         self.logger = logger
 
     def buscar_deputados(self) -> t.Generator[dict[str, t.Any], None, None]:
         """Retorna os deputados da legislação atual"""
         self.logger.info("Buscando deputados da legislação atual.")
 
-        response = self.session.get(f"{self.url_base}/deputados")
+        response = self.session.get(f"{self.url_base}/deputados", timeout=TIMEOUT)
         response.raise_for_status()
 
         self.logger.info(
@@ -84,7 +98,7 @@ class CamaraDadosAbertos:
     ) -> t.Generator[dict[str, t.Any], None, None]:
         """Itera através de todas as páginas de resultados."""
         while url:
-            response = self.session.get(url, params=params)
+            response = self.session.get(url, params=params, timeout=TIMEOUT)
             response.raise_for_status()
 
             data = response.json()

@@ -9,6 +9,18 @@ import typing as t
 import pandas as pd
 
 
+def _parse_data(valor: t.Any) -> date | None:
+    """Converte "AAAA-MM-DD..." em date; retorna None se ausente (a API às vezes omite)."""
+    if not isinstance(valor, str) or not valor:
+        return None
+    return datetime.strptime(valor[:10], "%Y-%m-%d").date()
+
+
+def _valor_ou_zero(valor: t.Any) -> float:
+    """Retorna o valor numérico, ou 0 se ausente/NaN."""
+    return 0.0 if valor is None or pd.isna(valor) else float(valor)
+
+
 @dataclass(frozen=True)
 class Gasto:
     id_deputado: int
@@ -18,7 +30,7 @@ class Gasto:
     tipo_documento: str
     mes: int
     ano: int
-    data: date
+    data: date | None
     valor: float
     valor_liquido: float
     uri_documento: str | None
@@ -35,9 +47,11 @@ class Gasto:
             tipo=json["tipoDespesa"],
             ano=json["ano"],
             mes=json["mes"],
-            data=datetime.strptime(json["dataDocumento"][:10], "%Y-%m-%d"),
+            data=_parse_data(json.get("dataDocumento")),
             valor=json["valorDocumento"],
-            valor_liquido=json["valorLiquido"],
+            # Calculado em vez de usar json["valorLiquido"]: desde 2026 a API
+            # retorna esse campo com o sinal invertido na maioria das despesas.
+            valor_liquido=round(json["valorDocumento"] - _valor_ou_zero(json.get("valorGlosa")), 2),
             uri_documento=json["urlDocumento"],
             nome_fornecedor=json["nomeFornecedor"],
             id_fornecedor=json["cnpjCpfFornecedor"],
@@ -97,7 +111,7 @@ class FonteDadosArquivo(FonteDados):
 
     @property
     def caminho_gas(self) -> Path:
-        return Path(self.dir) / "gastos.csv"
+        return Path(self.dir) / "gastos.csv.gz"  # comprimido: o CSV passa do limite de 100 MB do GitHub
 
     def obter_deputados(self) -> pd.DataFrame:
         return pd.read_csv(self.caminho_dep)
@@ -106,10 +120,10 @@ class FonteDadosArquivo(FonteDados):
         return pd.read_csv(self.caminho_gas)
 
     def exportar_deputados(self, df_deputados: pd.DataFrame) -> None:
-        df_deputados.to_csv(self.caminho_dep)
+        df_deputados.to_csv(self.caminho_dep, index=False)
 
     def exportar_gastos(self, df_gastos: pd.DataFrame) -> None:
-        df_gastos.to_csv(self.caminho_gas)
+        df_gastos.to_csv(self.caminho_gas, index=False)
 
 
 class CamaraRepositorio:

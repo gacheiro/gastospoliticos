@@ -76,7 +76,6 @@ def gh_pages(c):
 @task
 def exportar_dataframes(c):
     """Baixa deputados e despesas da API e salva em CSV."""
-    from itertools import chain
 
     import pandas as pd
 
@@ -89,11 +88,17 @@ def exportar_dataframes(c):
 
     with CamaraDadosAbertos() as camara:
         dados_deputados = tuple(camara.buscar_deputados())
-        dados_gastos = tuple(
-            chain.from_iterable(
-                camara.buscar_despesas(dep["id"]) for dep in dados_deputados
+        dados_gastos = []
+        for i, dep in enumerate(dados_deputados, start=1):
+            despesas = list(camara.buscar_despesas(dep["id"]))
+            dados_gastos.extend(despesas)
+            camara.logger.info(
+                "[%d/%d] %s: %d despesas",
+                i,
+                len(dados_deputados),
+                dep["nome"],
+                len(despesas),
             )
-        )
 
     fonte_dados.exportar_deputados(pd.DataFrame(dados_deputados))
     fonte_dados.exportar_gastos(pd.DataFrame(dados_gastos))
