@@ -1,0 +1,49 @@
+{% macro link_deputado(dep) -%}
+{{ raiz }}deputado/{{ dep.id }}.html
+{%- endmacro %}
+
+
+{% macro foto(dep, classe="") -%}
+<img class="foto {{ classe }}" src="{{ dep.foto }}" alt="" loading="lazy" width="48" height="48">
+{%- endmacro %}
+
+
+{% macro barra(valor, maximo, texto, classe="") -%}
+<div class="barra {{ classe }}">
+    <div class="barra__preenchimento" style="width: {{ valor|porcentagem(maximo) }}%"></div>
+    <div class="barra__valor">{{ texto }}</div>
+</div>
+{%- endmacro %}
+
+
+{# Ranking com foto e barra proporcional ao maior gasto (vindo do site antigo). #}
+{% macro ranking(rank) %}
+<ol class="ranking">
+    {% for item in rank.itens %}
+    {% set dep = item.deputado %}
+    <li>
+        <a class="ranking__item" href="{{ link_deputado(dep) }}">
+            <span class="ranking__pos">{{ loop.index }}</span>
+            {{ foto(dep) }}
+            <span>
+                <span class="ranking__nome">{{ dep.nome }} <small>{{ dep.partido }}/{{ dep.uf }}</small></span>
+                {{ barra(item.total, rank.maximo, item.total|moeda_curta) }}
+            </span>
+        </a>
+    </li>
+    {% endfor %}
+</ol>
+{% endmacro %}
+
+
+{% macro categorias(itens, classe="") %}
+{% set maximo = itens[0][1] if itens else 1 %}
+<ul class="categorias">
+    {% for tipo, valor in itens %}
+    <li>
+        <span>{{ tipo }}</span>
+        {{ barra(valor, maximo, valor|moeda_curta, classe) }}
+    </li>
+    {% endfor %}
+</ul>
+{% endmacro %}

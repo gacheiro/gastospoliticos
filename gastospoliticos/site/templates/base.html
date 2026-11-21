@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}{% endblock %}Gastos dos Políticos</title>
+    <meta name="description" content="{% block descricao %}Gastos dos deputados federais com a Cota Parlamentar, com dados públicos da Câmara dos Deputados.{% endblock %}">
+    <link rel="stylesheet" href="{{ raiz }}static/style.css">
+</head>
+
+<body>
+    <header class="nav">
+        <div class="container">
+            <a class="nav__marca" href="{{ raiz }}index.html">Gastos dos <span>Políticos</span></a>
+            <ul class="nav__links">
+                <li><a href="{{ raiz }}index.html" {% if pagina == "inicio" %}aria-current="page"{% endif %}>Início</a></li>
+                <li><a href="{{ raiz }}deputados.html" {% if pagina == "deputados" %}aria-current="page"{% endif %}>Deputados</a></li>
+                <li><a href="{{ raiz }}sobre.html" {% if pagina == "sobre" %}aria-current="page"{% endif %}>Sobre</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            {% block conteudo %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <span>Dados públicos da <a href="https://dadosabertos.camara.leg.br/">Câmara dos Deputados</a> · atualizados em {{ atualizado_em.strftime("%d/%m/%Y") }}</span>
+            <a href="https://github.com/gacheiro/gastospoliticos">Código no GitHub</a>
+        </div>
+    </footer>
+    <script src="{{ raiz }}static/filtros.js" defer></script>
+</body>
+
+</html>

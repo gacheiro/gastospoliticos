@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% from "_macros.html" import foto, categorias with context %}
+{% set dep = p.deputado %}
+
+{% block titulo %}{{ dep.nome }} ({{ dep.partido }}/{{ dep.uf }}) · {% endblock %}
+{% block descricao %}Gastos de {{ dep.nome }} ({{ dep.partido }}/{{ dep.uf }}) com a Cota Parlamentar.{% endblock %}
+
+{% block conteudo %}
+<section class="perfil">
+    {{ foto(dep, "foto--grande") }}
+    <div>
+        <h1>{{ dep.nome }}</h1>
+        <span class="etiqueta">{{ dep.partido }}</span><span class="etiqueta">{{ dep.uf }}</span>
+        <div class="perfil__links">
+            <a href="https://www.camara.leg.br/deputados/{{ dep.id }}">Página na Câmara</a>
+            {% if dep.email %}· <a href="mailto:{{ dep.email }}">{{ dep.email }}</a>{% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="numeros" aria-label="Totais">
+    <div class="numero">
+        <div class="numero__rotulo">Gasto em {{ ano }}</div>
+        <div class="numero__valor">{{ p.total_ano|moeda }}</div>
+    </div>
+    <div class="numero">
+        <div class="numero__rotulo">Gasto na legislatura</div>
+        <div class="numero__valor">{{ p.total_legislatura|moeda }}</div>
+    </div>
+    <div class="numero">
+        <div class="numero__rotulo">Posição em {{ ano }}</div>
+        <div class="numero__valor">{{ posicao }}º <small>de {{ n_deputados }}</small></div>
+    </div>
+</section>
+
+<div class="grade-2">
+    <section class="caixa">
+        <h2 class="caixa__titulo">Gastos por mês em <span class="marca-texto">{{ ano }}</span></h2>
+        {% set maximo = p.por_mes|map("last")|max %}
+        <div class="meses" role="img" aria-label="Gráfico de gastos mensais em {{ ano }}">
+            {% for mes, valor in p.por_mes %}
+            <div class="mes">
+                <div class="mes__barra {% if not valor %}mes__barra--vazia{% endif %}"
+                     style="height: {{ valor|porcentagem(maximo) }}%"
+                     data-valor="{{ mes|mes_abrev }}: {{ valor|moeda }}"
+                     title="{{ mes|nome_mes }}: {{ valor|moeda }}"></div>
+                <div class="mes__rotulo">{{ mes|mes_abrev }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <h3 class="caixa__titulo" style="font-size: 16px; margin-top: 24px">Por ano</h3>
+        <ul class="anos">
+            {% for a, valor in p.por_ano %}
+            <li><strong>{{ a }}</strong>{{ valor|moeda }}</li>
+            {% endfor %}
+        </ul>
+        <p class="nota">Os meses mais recentes podem estar incompletos: há até 3 meses para apresentar as notas.</p>
+    </section>
+
+    <section class="caixa">
+        <h2 class="caixa__titulo">Tipos de gasto em <span class="marca-texto">{{ ano }}</span></h2>
+        {% if p.por_tipo %}
+            {{ categorias(p.por_tipo) }}
+        {% else %}
+            <p class="vazio">Nenhum gasto registrado em {{ ano }}.</p>
+        {% endif %}
+    </section>
+</div>
+
+<section class="caixa">
+    <h2 class="caixa__titulo">Despesas de <span class="marca-texto">{{ ano }}</span></h2>
+    {% set tipos = p.por_tipo|map("first")|list %}
+    <div class="filtros">
+        <label class="campo">Mês
+            <select id="filtro-mes">
+                <option value="">Todos os meses</option>
+                {% for mes, valor in p.por_mes if valor %}
+                <option value="{{ mes }}">{{ mes|nome_mes|capitalize }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="campo campo--largo">Tipo
+            <select id="filtro-tipo">
+                <option value="">Todos os tipos</option>
+                {% for t in tipos %}<option value="{{ loop.index0 }}">{{ t }}</option>{% endfor %}
+            </select>
+        </label>
+    </div>
+    <p class="contagem" id="total-filtrado" aria-live="polite">{{ p.despesas|length }} despesas · {{ p.total_ano|moeda }}</p>
+
+    <div class="tabela-rolagem">
+        <table id="tabela-despesas">
+            <thead>
+                <tr><th>Data</th><th>Tipo</th><th>Fornecedor</th><th class="num">Valor</th><th>Nota</th></tr>
+            </thead>
+            <tbody>
+{# Uma linha por despesa, sem indentação: são ~280 linhas por página em média. #}
+{% for d in p.despesas %}
+<tr data-mes="{{ d.mes }}" data-tipo="{{ tipos.index(d.tipo) if d.tipo in tipos else '' }}" data-valor="{{ d.valor }}"><td>{% if d.data %}{{ d.data.strftime("%d/%m") }}{% else %}{{ d.mes|mes_abrev }}{% endif %}<td>{{ d.tipo }}<td>{{ d.fornecedor }}<td>{{ d.valor|moeda }}<td>{% if d.url %}<a href="{{ d.url }}">ver</a>{% else %}–{% endif %}</tr>
+{% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="vazio" id="tabela-vazia" hidden>Nenhuma despesa com esses filtros.</p>
+    <p class="nota">Despesas de anos anteriores estão resumidas em "Por ano" e no
+        <a href="https://www.camara.leg.br/transparencia/gastos-parlamentares">portal da Câmara</a>.</p>
+</section>
+{% endblock %}

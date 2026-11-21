@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "_macros.html" import foto, link_deputado with context %}
+
+{% block titulo %}Deputados · {% endblock %}
+
+{% block conteudo %}
+<section class="caixa">
+    <h1 class="caixa__titulo">Todos os <span class="marca-texto">deputados</span></h1>
+
+    <div class="filtros" role="search">
+        <label class="campo campo--largo">Nome
+            <input id="busca-nome" type="search" placeholder="Buscar por nome" autocomplete="off">
+        </label>
+        <label class="campo">UF
+            <select id="filtro-uf">
+                <option value="">Todas</option>
+                {% for uf in ufs %}<option>{{ uf }}</option>{% endfor %}
+            </select>
+        </label>
+        <label class="campo">Partido
+            <select id="filtro-partido">
+                <option value="">Todos</option>
+                {% for p in partidos %}<option>{{ p }}</option>{% endfor %}
+            </select>
+        </label>
+        <label class="campo">Ordenar por
+            <select id="ordem">
+                <option value="ano">Gasto em {{ ano }}</option>
+                <option value="legislatura">Gasto na legislatura</option>
+                <option value="nome">Nome</option>
+            </select>
+        </label>
+    </div>
+
+    <p class="contagem" id="contagem-deputados" aria-live="polite">{{ deputados|length }} deputados</p>
+
+    <ul class="cartoes" id="lista-deputados">
+        {% for d in deputados %}
+        <li data-nome="{{ d.nome|sem_acento }}" data-uf="{{ d.uf }}" data-partido="{{ d.partido }}"
+            data-ano="{{ d.total_ano }}" data-legislatura="{{ d.total_legislatura }}">
+            <a class="cartao" href="{{ link_deputado(d) }}">
+                {{ foto(d) }}
+                <span>
+                    <span class="cartao__nome">{{ d.nome }}</span><br>
+                    <span class="cartao__meta">{{ d.partido }}/{{ d.uf }}</span><br>
+                    <span class="cartao__valor"><span class="valor">{{ d.total_ano|moeda_curta }}</span> em {{ ano }}</span>
+                </span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <p class="vazio" id="lista-vazia" hidden>Nenhum deputado encontrado com esses filtros.</p>
+</section>
+{% endblock %}

@@ -5,428 +5,656 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gastos dos Políticos</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            width: 92%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: #ffeaa7;
-            font-family: 'Courier New', Courier, monospace;
-            line-height: 1.5;
-            color: #1a1a1a;
-        }
-
-        h1 {
-            margin-bottom: 40px;
-            font-size: 42px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -2px;
-            text-shadow: 4px 4px 0px #ff006e;
-            border: 4px solid #1a1a1a;
-            background: #ffffff;
-            padding: 20px;
-            box-shadow: 8px 8px 0px #1a1a1a;
-        }
-
-        /* Grid de deputados */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 60px;
-        }
-
-        .card {
-            border: 4px solid #1a1a1a;
-            padding: 16px;
-            background: #ffffff;
-            box-shadow: 6px 6px 0px #1a1a1a;
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-
-        .card:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 10px 10px 0px #ff006e;
-        }
-
-        .card-title {
-            font-weight: 900;
-            font-size: 18px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            background: #ff006e;
-            color: white;
-            padding: 8px;
-            display: inline-block;
-            border: 2px solid #1a1a1a;
-        }
-
-        .card-meta {
-            font-size: 14px;
-            color: #1a1a1a;
-            margin-bottom: 16px;
-            background: #ffd60a;
-            padding: 8px;
-            border: 2px solid #1a1a1a;
-            font-weight: 700;
-        }
-
-        .card-gastos {
-            font-size: 15px;
-            padding: 12px 0;
-            border-top: 3px dashed #1a1a1a;
-            border-bottom: 3px dashed #1a1a1a;
-            margin: 16px 0;
-            background: #caf0f8;
-            padding: 16px;
-            border-left: 3px solid #1a1a1a;
-            border-right: 3px solid #1a1a1a;
-        }
-
-        .gastos-valor {
-            font-weight: 900;
-            color: #ff006e;
-            font-size: 24px;
-            margin-left: 8px;
-        }
-
-        /* Seção de gastos */
-        .gastos-section {
-            margin-top: 60px;
-        }
-
-        .gastos-section h2 {
-            font-size: 32px;
-            font-weight: 900;
-            margin-bottom: 24px;
-            text-transform: uppercase;
-            text-decoration: underline;
-            text-decoration-thickness: 4px;
-            text-decoration-color: #ff006e;
-            background: #ffffff;
-            padding: 16px;
-            border: 4px solid #1a1a1a;
-            box-shadow: 6px 6px 0px #1a1a1a;
-            letter-spacing: -1px;
-        }
-
-        .gastos-list {
-            list-style: none;
-            max-height: 500px;
-            overflow-y: auto;
-            background: #ffffff;
-            border: 4px solid #1a1a1a;
-            box-shadow: 8px 8px 0px #1a1a1a;
-        }
-
-        .gastos-list li {
-            padding: 16px 20px;
-            border-bottom: 3px solid #1a1a1a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            background: #ffffff;
-            transition: background 0.1s;
-        }
-
-        .gastos-list li:nth-child(even) {
-            background: #ffb703;
-        }
-
-        .gastos-list li:nth-child(odd) {
-            background: #fb8500;
-        }
-
-        .gastos-list li:hover {
-            background: #ff006e !important;
-            color: white;
-        }
-
-        .gastos-list li:last-child {
-            border-bottom: none;
-        }
-
-        .gasto-tipo {
-            color: #1a1a1a;
-            flex: 1;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: -0.5px;
-        }
-
-        .gasto-valor {
-            font-weight: 900;
-            color: #d00000;
-            text-align: right;
-            min-width: 120px;
-            font-size: 16px;
-            background: #ffffff;
-            padding: 8px 12px;
-            border: 2px solid #1a1a1a;
-        }
-
-        /* Scrollbar personalizado */
-        .gastos-list::-webkit-scrollbar {
-            width: 16px;
-        }
-
-        .gastos-list::-webkit-scrollbar-track {
-            background: #ffffff;
-            border-left: 3px solid #1a1a1a;
-        }
-
-        .gastos-list::-webkit-scrollbar-thumb {
-            background: #ff006e;
-            border: 2px solid #1a1a1a;
-        }
-
-        /* Responsivo */
-        @media (max-width: 768px) {
-            .cards-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                gap: 16px;
-            }
-
-            body {
-                padding: 20px 10px;
-            }
-
-            h1 {
-                font-size: 28px;
-            }
-
-            .card-title {
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .gastos-list li {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-
-            .gasto-valor {
-                margin-top: 8px;
-                text-align: left;
-                width: 100%;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-        }
-
-        /* Badge decorativa */
-        .badge {
-            display: inline-block;
-            background: #1a1a1a;
-            color: #ffffff;
-            padding: 4px 12px;
-            font-weight: 700;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-left: 8px;
-            border: 2px solid #ffffff;
-        }
-
-        /* Rodapé */
-        footer {
-            margin-top: 60px;
-            padding: 20px;
-            background: #1a1a1a;
-            color: #ffffff;
-            text-align: center;
-            border: 4px solid #ff006e;
-            box-shadow: 6px 6px 0px #ff006e;
-        }
-    </style>
+    <meta name="description" content="Gastos dos deputados federais com a Cota Parlamentar, com dados públicos da Câmara dos Deputados.">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 
 <body>
-    <h1>💸 Gastos dos Políticos </h1>
+    <header class="nav">
+        <div class="container">
+            <a class="nav__marca" href="index.html">Gastos dos <span>Políticos</span></a>
+            <ul class="nav__links">
+                <li><a href="index.html" aria-current="page">Início</a></li>
+                <li><a href="deputados.html" >Deputados</a></li>
+                <li><a href="sobre.html" >Sobre</a></li>
+            </ul>
+        </div>
+    </header>
 
-    <!-- Grid de deputados -->
-    <div class="cards-grid">
-        
-        <div class="card">
-            <h2 class="card-title">Albuquerque</h2>
-            <div class="card-meta">
-                🏛️ REPUBLICANOS · RR
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.349.389,58</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">Gabriel Mota</h2>
-            <div class="card-meta">
-                🏛️ UNIÃO · RR
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.341.591,89</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">Pompeo de Mattos</h2>
-            <div class="card-meta">
-                🏛️ PDT · RS
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.338.323,47</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">Zezinho Barbary</h2>
-            <div class="card-meta">
-                🏛️ PP · AC
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.324.793,77</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">Zé Haroldo Cathedral</h2>
-            <div class="card-meta">
-                🏛️ UNIÃO · RR
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.317.011,79</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">Duda Ramos</h2>
-            <div class="card-meta">
-                🏛️ PODE · RR
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.313.235,21</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">Nicoletti</h2>
-            <div class="card-meta">
-                🏛️ PL · RR
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.300.714,18</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">Helena Lima</h2>
-            <div class="card-meta">
-                🏛️ PSD · RR
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.295.806,98</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="card-title">João Maia</h2>
-            <div class="card-meta">
-                🏛️ PP · RN
-            </div>
-            <div class="card-gastos">
-                <span>Gastos:</span>
-                <span class="gastos-valor">R$ 2.286.509,09</span>
-            </div>
-        </div>
-        
+    <main>
+        <div class="container">
+<section class="numeros" aria-label="Totais">
+    <div class="numero">
+        <div class="numero__rotulo">Gasto em 2026</div>
+        <div class="numero__valor">R$ 190 mi</div>
     </div>
+    <div class="numero">
+        <div class="numero__rotulo">Gasto na legislatura (2023–2026)</div>
+        <div class="numero__valor">R$ 876 mi</div>
+    </div>
+    <div class="numero">
+        <div class="numero__rotulo">Deputados</div>
+        <div class="numero__valor">513</div>
+    </div>
+</section>
 
-    <!-- Gastos -->
-    <div class="gastos-section">
-        <h2>🧾 Gastos Recentes</h2>
-        <ul class="gastos-list">
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 209.948,00</span>
+<form class="caixa filtros" action="deputados.html" method="get" role="search">
+    <label class="campo campo--largo">Buscar deputado
+        <input type="search" name="q" placeholder="Nome do deputado" list="nomes" autocomplete="off">
+        <datalist id="nomes">
+<option value="Zé Adriano"><option value="Antonio Andrade"><option value="Átila Lins"><option value="Eunício Oliveira"><option value="Márcio Marinho"><option value="Luizianne Lins"><option value="Keniston Braga"><option value="Padre João"><option value="Gabriel Mota"><option value="Fausto Pinato"><option value="Flávio Nogueira"><option value="Antônio Doido"><option value="Diego Garcia"><option value="Robinson Faria"><option value="Daniel Almeida"><option value="Albuquerque"><option value="Zezinho Barbary"><option value="Geraldo Resende"><option value="Murillo Gouvea"><option value="Camila Jara"><option value="Zé Haroldo Cathedral"><option value="Lula da Fonte"><option value="Márcio Jerry"><option value="Alice Portugal"><option value="Delegada Katarina"><option value="Ana Pimentel"><option value="Carla Dickson"><option value="Eriberto Medeiros"><option value="Carlos Veras"><option value="André Abdon"><option value="Renilce Nicodemos"><option value="Arthur Oliveira Maia"><option value="Luisa Canziani"><option value="Bacelar"><option value="Raimundo Costa"><option value="Delegado Marcelo Freitas"><option value="Pedro Westphalen"><option value="Franciane Bayer"><option value="Rubens Pereira Júnior"><option value="João Maia"><option value="Junior Lourenço"><option value="Saulo Pedroso"><option value="Alceu Moreira"><option value="Pedro Uczai"><option value="Luiz Carlos Busato"><option value="Nelson Barbudo"><option value="Henderson Pinto"><option value="João Cury"><option value="Socorro Neri"><option value="Túlio Gadêlha"><option value="Dr. Ismael Alexandrino"><option value="Geraldo Mendes"><option value="Misael Varella"><option value="Duda Ramos"><option value="Juninho do Pneu"><option value="Felipe Carreras"><option value="Luiz Couto"><option value="Welter"><option value="Bruno Farias"><option value="Valmir Assunção"><option value="Eros Biondini"><option value="Igor Timo"><option value="Jorge Goetten"><option value="Maurício Carvalho"><option value="Roberto Duarte"><option value="Dagoberto Nogueira"><option value="Fausto Jr."><option value="Rafael Fera"><option value="Alexandre Lindenmeyer"><option value="Rosângela Reis"><option value="Dilceu Sperafico"><option value="Augusto Coutinho"><option value="Antônia Lúcia"><option value="Zé Trovão"><option value="Helio Lopes"><option value="Rodolfo Nogueira"><option value="Márcio Biolchi"><option value="Daniel Freitas"><option value="Daniel Trzeciak"><option value="Delegado Bruno Lima"><option value="Merlong Solano"><option value="Ruy Carneiro"><option value="Kiko Celeguim"><option value="Daniela Reinehr"><option value="Clodoaldo Magalhães"><option value="Pastor Diniz"><option value="Luiza Erundina"><option value="Nicoletti"><option value="Célia Xakriabá"><option value="Carol Dartora"><option value="Cezinha de Madureira"><option value="Felipe Becari"><option value="Lafayette de Andrada"><option value="Eduardo Velloso"><option value="Danilo Forte"><option value="Domingos Neto"><option value="Joseildo Ramos"><option value="Delegado Paulo Bilynskyj"><option value="Silvia Cristina"><option value="Félix Mendonça Júnior"><option value="Simone Marquetto"><option value="Coronel Fernanda"><option value="Tião Medeiros"><option value="Vitor Lippi"><option value="Rodrigo da Zaeli"><option value="Pedro Lucas Fernandes"><option value="Helena Lima"><option value="Gabriel Nunes"><option value="Bibo Nunes"><option value="Sanderson"><option value="Delegada Ione"><option value="Maria do Rosário"><option value="Delegado Matheus Laiola"><option value="José Medeiros"><option value="General Girão"><option value="Sidney Leite"><option value="Átila Lira"><option value="Waldenor Pereira"><option value="Stefano Aguiar"><option value="Nilto Tatto"><option value="Arnaldo Jardim"><option value="Benes Leocádio"><option value="Eduardo da Fonte"><option value="João Carlos Bacelar"><option value="Leonardo Monteiro"><option value="Toninho Wandscheer"><option value="Julia Zanatta"><option value="Vinicius Gurgel"><option value="Jilmar Tatto"><option value="Marangoni"><option value="Luciano Ducci"><option value="Pedro Paulo"><option value="Maria Rosas"><option value="Delegado da Cunha"><option value="Tabata Amaral"><option value="Fernando Monteiro"><option value="Dani Cunha"><option value="Marussa Boldrin"><option value="Fred Costa"><option value="Jorge Solla"><option value="Afonso Motta"><option value="Pastor Gil"><option value="Cobalchini"><option value="Afonso Hamm"><option value="Jack Rocha"><option value="Max Lemos"><option value="Eli Borges"><option value="Felipe Francischini"><option value="Acácio Favacho"><option value="Tarcísio Motta"><option value="Denise Pessôa"><option value="Lídice da Mata"><option value="Reimont"><option value="Josenildo"><option value="Juscelino Filho"><option value="Ricardo Salles"><option value="Bohn Gass"><option value="Luiz Nishimori"><option value="Maria Arraes"><option value="Célio Studart"><option value="Wilson Santiago"><option value="Samuel Viana"><option value="Marcos Tavares"><option value="David Soares"><option value="Mauro Benevides Filho"><option value="Iza Arruda"><option value="Rogério Correia"><option value="Antonio Brito"><option value="Sergio Souza"><option value="Professora Luciene Cavalcante"><option value="Luiz Carlos Hauly"><option value="Claudio Cajado"><option value="Rogéria Santos"><option value="Coronel Ulysses"><option value="José Airton Félix Cirilo"><option value="Lêda Borges"><option value="Dra. Alessandra Haber"><option value="Marcelo Crivella"><option value="Castro Neto"><option value="Pompeo de Mattos"><option value="Vinicius Carvalho"><option value="Coronel Meira"><option value="Capitão Alden"><option value="Evair Vieira de Melo"><option value="Duarte Jr."><option value="Orlando Silva"><option value="Jeferson Rodrigues"><option value="Fernando Coelho Filho"><option value="Pr. Marco Feliciano"><option value="Aliel Machado"><option value="Bandeira de Mello"><option value="Julio Lopes"><option value="Mauricio Marcon"><option value="Sâmia Bomfim"><option value="Tiririca"><option value="Raimundo Santos"><option value="Alexandre Guimarães"><option value="Rafael Simoes"><option value="Paulo Azi"><option value="Airton Faleiro"><option value="Adilson Barroso"><option value="Osmar Terra"><option value="Geovania de Sá"><option value="Elmar Nascimento"><option value="Defensor Stélio Dener"><option value="Magda Mofatto"><option value="Lucas Ramos"><option value="Nikolas Ferreira"><option value="Beto Pereira"><option value="André Figueiredo"><option value="Thiago de Joaldo"><option value="Carlos Jordy"><option value="Messias Donato"><option value="Lucio Mosquini"><option value="Vander Loubet"><option value="Paulo Abi-Ackel"><option value="Cabo Gilberto Silva"><option value="Bebeto"><option value="Fabio Schiochet"><option value="Dr. Victor Linhalis"><option value="Ana Paula Lima"><option value="Clarissa Tércio"><option value="Missionário José Olimpio"><option value="Natália Bonavides"><option value="Adolfo Viana"><option value="Zé Neto"><option value="Luiz Philippe de Orleans e Bragança"><option value="Pastor Henrique Vieira"><option value="Julio Arcoverde"><option value="Renildo Calheiros"><option value="Paulo Guedes"><option value="Neto Carletto"><option value="Miguel Ângelo"><option value="Juliana Cardoso"><option value="Olival Marques"><option value="Ana Paula Leão"><option value="Laura Carneiro"><option value="Ismael"><option value="Erika Hilton"><option value="Da Vitoria"><option value="Rosana Valle"><option value="Sargento Portugal"><option value="Dr. Fernando Máximo"><option value="Wellington Roberto"><option value="Dorinaldo Malafaia"><option value="Cleber Verde"><option value="Jandira Feghali"><option value="Jorge Braz"><option value="Giovani Cherini"><option value="Danrlei de Deus Hinterholz"><option value="Roberta Roma"><option value="Zeca Dirceu"><option value="Domingos Sávio"><option value="Fernando Mineiro"><option value="Nely Aquino"><option value="Joaquim Passarinho"><option value="Tadeu Veneri"><option value="Delegado Fabio Costa"><option value="Dr. Francisco"><option value="Carlos Henrique Gaguim"><option value="Zé Silva"><option value="Mendonça Filho"><option value="Capitão Augusto"><option value="Dr Flávio"><option value="Greyce Elias"><option value="Patrus Ananias"><option value="Marcon"><option value="Jefferson Campos"><option value="Alfredinho"><option value="Vermelho"><option value="Luiz Fernando Faria"><option value="Leur Lomanto Júnior"><option value="Juarez Costa"><option value="Heitor Schuch"><option value="Helder Salomão"><option value="Cristiane Lopes"><option value="Gilvan da Federal"><option value="Otoni de Paula"><option value="Thiago Flores"><option value="Prof. Reginaldo Veras"><option value="Rui Falcão"><option value="Fernanda Melchionna"><option value="Duda Salabert"><option value="Paulo Magalhães"><option value="Diego Coronel"><option value="Arlindo Chinaglia"><option value="Gilberto Nascimento"><option value="Hugo Leal"><option value="Aguinaldo Ribeiro"><option value="Sargento Gonçalves"><option value="Ricardo Ayres"><option value="Mersinho Lucena"><option value="Júnior Mano"><option value="Fernando Rodolfo"><option value="Celso Sabino"><option value="Silas Câmara"><option value="Soraya Santos"><option value="Ribamar Silva"><option value="Marcelo Álvaro Antônio"><option value="Talíria Petrone"><option value="Dimas Fabiano"><option value="Weliton Prado"><option value="Carlos Zarattini"><option value="Capitão Alberto Neto"><option value="Lucas Redecker"><option value="Luciano Amaral"><option value="Silvye Alves"><option value="Saullo Vianna"><option value="Meire Serafim"><option value="Lincoln Portela"><option value="João Daniel"><option value="Luiz Lima"><option value="André Fernandes"><option value="Pinheirinho"><option value="Luciano Bivar"><option value="General Pazuello"><option value="Dilvanda Faro"><option value="Paulo Freire Costa"><option value="Dr. Frederico"><option value="Zé Vitor"><option value="Sóstenes Cavalcante"><option value="Rubens Otoni"><option value="Mário Heringer"><option value="Enfermeira Rejane"><option value="Bia Kicis"><option value="Carlos Sampaio"><option value="Ricardo Barros"><option value="Ricardo Guidi"><option value="Aluisio Mendes"><option value="Waldemar Oliveira"><option value="Gustinho Ribeiro"><option value="Rodrigo Gambale"><option value="Emanuel Pinheiro Neto"><option value="Rafael Prudente"><option value="Icaro de Valmir"><option value="André Janones"><option value="André Ferreira"><option value="Marcos Pollon"><option value="Delegado Éder Mauro"><option value="Daiana Santos"><option value="Gervásio Maia"><option value="Beto Richa"><option value="Matheus Noronha"><option value="Hugo Motta"><option value="Mauricio do Vôlei"><option value="Adriano do Baldy"><option value="Pedro Campos"><option value="Baleia Rossi"><option value="Marcos Aurélio Sampaio"><option value="Alencar Santana"><option value="Moses Rodrigues"><option value="Marx Beltrão"><option value="Guilherme Uchoa"><option value="Delegado Palumbo"><option value="Rafael Brito"><option value="Glaustin da Fokus"><option value="Gutemberg Reis"><option value="Junio Amaral"><option value="Ivoneide Caetano"><option value="Aécio Neves"><option value="Reginaldo Lopes"><option value="Paulo Folletto"><option value="Amaro Neto"><option value="Roberto Monteiro Pai"><option value="Benedita da Silva"><option value="Elcione Barbalho"><option value="Dimas Gadelha"><option value="Pedro Aihara"><option value="Dr. Luiz Ovando"><option value="Rodrigo de Castro"><option value="Gilson Daniel"><option value="Robério Monteiro"><option value="Afonso Florence"><option value="Dr. Zacharias Calil"><option value="Lindbergh Farias"><option value="José Rocha"><option value="Tiago Dimas"><option value="Miguel Lombardi"><option value="Antonio Carlos Rodrigues"><option value="Adail Filho"><option value="Coronel Chrisóstomo"><option value="Rodrigo Valadares"><option value="Pastor Eurico"><option value="Chico Alencar"><option value="Andreia Siqueira"><option value="Bruno Ganem"><option value="Aureo Ribeiro"><option value="Diego Andrade"><option value="José Nelto"><option value="Professor Alcides"><option value="Filipe Barros"><option value="Newton Cardoso Jr"><option value="Dandara"><option value="Daniel Barbosa"><option value="Paulo Litro"><option value="Leo Prates"><option value="Pezenti"><option value="Guilherme Derrite"><option value="Hildo Rocha"><option value="Marcelo Queiroz"><option value="Florentino Neto"><option value="Luiz Gastão"><option value="Fernanda Pessoa"><option value="Júlio Cesar"><option value="Delegada Adriana Accorsi"><option value="José Priante"><option value="Paulo Pimenta"><option value="Ricardo Maia"><option value="Dal Barreto"><option value="Paulão"><option value="Mário Negromonte Jr."><option value="Pedro Lupion"><option value="Damião Feliciano"><option value="Caroline de Toni"><option value="Romero Rodrigues"><option value="Murilo Galdino"><option value="Sérgio Brito"><option value="Any Ortiz"><option value="Yandra Moura"><option value="Flávia Morais"><option value="Professora Marcivania"><option value="Dr. Daniel Soranz"><option value="Marcos Pereira"><option value="Dr. Jaziel"><option value="Marcos Soares"><option value="Josivaldo JP"><option value="Gilberto Abramo"><option value="Célio Silveira"><option value="Charles Fernandes"><option value="Mario Frias"><option value="Eduardo Bismarck"><option value="Gleisi Hoffmann"><option value="Jonas Donizette"><option value="Zucco"><option value="Isnaldo Bulhões Jr."><option value="AJ Albuquerque"><option value="Emidinho Madeira"><option value="Paulinho da Força"><option value="Mauricio Neves"><option value="Marcel van Hattem"><option value="Erika Kokay"><option value="Kim Kataguiri"><option value="Renata Abreu"><option value="Doutor Luizinho"><option value="Fábio Teruel"><option value="Amanda Gentil"><option value="Gustavo Gayer"><option value="Paulo Teixeira"><option value="Luiz Carlos Motta"><option value="Carlos Gomes"><option value="Marcelo Moraes"><option value="Ricardo Abrão"><option value="Marina Silva"><option value="Sargento Fahur"><option value="Paulo Alexandre Barbosa"><option value="Sônia Guajajara"><option value="Filipe Martins"><option value="Rosangela Gomes"><option value="Jadyel Alencar"><option value="Coronel Assis"><option value="Leandre"><option value="Altineu Côrtes"><option value="Carlos Chiodini"><option value="Alfredo Gaspar"><option value="Arthur Lira"><option value="Giacobo"><option value="Julio Cesar Ribeiro"><option value="Fabio Reis"><option value="Marreca Filho"><option value="Fabio Garcia"><option value="Silvio Costa Filho"><option value="Fábio Macedo"><option value="Celso Russomanno"><option value="Paulo Lemos"><option value="Chris Tonietto"><option value="Daniela do Waguinho"><option value="Rodrigo Rollemberg"><option value="Hercílio Coelho Diniz"><option value="Júnior Ferrari"><option value="Alex Manente"><option value="Beto Preto"><option value="Josimar Maranhãozinho"><option value="Milton Vieira"><option value="Luciano Vieira"><option value="Idilvan Alencar"><option value="Rosangela Moro"><option value="Padovani"><option value="Vicentinho Júnior"><option value="Alberto Fraga"><option value="Aline Gurgel"><option value="Luis Tibé"><option value="Márcio Honaiser"><option value="Covatti Filho"><option value="João Leão"><option value="Detinha"><option value="André Fufuca"><option value="Alex Santana"><option value="Delegado Caveira"><option value="Gilson Marques"><option value="Daniel Agrobom"><option value="Inácio Arruda"><option value="Alexandre Leite"><option value="Priscila Costa"><option value="Fred Linhares"><option value="Adriana Ventura"><option value="Yury Bruno"><option value="Euclydes Pettersen"><option value="Glauber Braga"><option value="Sandro Alex"><option value="Marcio Alvino"><option value="Gilmar Machado"><option value="Amom Mandel"><option value="Pastor Sargento Isidório">        </datalist>
+    </label>
+    <label class="campo">UF
+        <select name="uf">
+            <option value="">Todas</option>
+<option>AC</option><option>AL</option><option>AM</option><option>AP</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MG</option><option>MS</option><option>MT</option><option>PA</option><option>PB</option><option>PE</option><option>PI</option><option>PR</option><option>RJ</option><option>RN</option><option>RO</option><option>RR</option><option>RS</option><option>SC</option><option>SE</option><option>SP</option><option>TO</option>        </select>
+    </label>
+    <label class="campo">Partido
+        <select name="partido">
+            <option value="">Todos</option>
+<option>AVANTE</option><option>CIDADANIA</option><option>MDB</option><option>MISSÃO</option><option>NOVO</option><option>PCdoB</option><option>PDT</option><option>PL</option><option>PODE</option><option>PP</option><option>PRD</option><option>PSB</option><option>PSD</option><option>PSDB</option><option>PSOL</option><option>PT</option><option>PV</option><option>REDE</option><option>REPUBLICANOS</option><option>SOLIDARIEDADE</option><option>UNIÃO</option>        </select>
+    </label>
+    <button class="botao" type="submit">Buscar</button>
+</form>
+
+<div class="grade-2">
+    <section class="caixa">
+        <h2 class="caixa__titulo">Quem mais gastou em <span class="marca-texto">2026</span></h2>
+        <ol class="ranking">
+    <li>
+        <a class="ranking__item" href="deputado/230768.html">
+            <span class="ranking__pos">1</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/230768.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Zé Adriano <small>PP/AC</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 100.00%"></div>
+    <div class="barra__valor">R$ 644 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/220544.html">
+            <span class="ranking__pos">2</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220544.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Antonio Andrade <small>PSDB/TO</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 93.62%"></div>
+    <div class="barra__valor">R$ 603 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/74090.html">
+            <span class="ranking__pos">3</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/74090.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Átila Lins <small>PSD/AM</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 90.32%"></div>
+    <div class="barra__valor">R$ 581 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/74454.html">
+            <span class="ranking__pos">4</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/74454.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Eunício Oliveira <small>MDB/CE</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 90.25%"></div>
+    <div class="barra__valor">R$ 581 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/150418.html">
+            <span class="ranking__pos">5</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/150418.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Márcio Marinho <small>REPUBLICANOS/BA</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 89.35%"></div>
+    <div class="barra__valor">R$ 575 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/178866.html">
+            <span class="ranking__pos">6</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/178866.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Luizianne Lins <small>REDE/CE</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 88.66%"></div>
+    <div class="barra__valor">R$ 571 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/220677.html">
+            <span class="ranking__pos">7</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220677.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Keniston Braga <small>MDB/PA</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 88.61%"></div>
+    <div class="barra__valor">R$ 570 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/160556.html">
+            <span class="ranking__pos">8</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/160556.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Padre João <small>PT/MG</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 88.10%"></div>
+    <div class="barra__valor">R$ 567 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/224117.html">
+            <span class="ranking__pos">9</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/224117.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Gabriel Mota <small>UNIÃO/RR</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 87.55%"></div>
+    <div class="barra__valor">R$ 563 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/66828.html">
+            <span class="ranking__pos">10</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/66828.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Fausto Pinato <small>UNIÃO/SP</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 86.78%"></div>
+    <div class="barra__valor">R$ 559 mil</div>
+</div>
+            </span>
+        </a>
+    </li>
+</ol>
+
+        <p class="nota">Os deputados têm até 3 meses para apresentar as notas, então os meses mais recentes ainda estão incompletos.</p>
+    </section>
+
+    <section class="caixa">
+        <h2 class="caixa__titulo">Quem mais gastou na <span class="marca-texto">legislatura</span></h2>
+        <ol class="ranking">
+    <li>
+        <a class="ranking__item" href="deputado/220538.html">
+            <span class="ranking__pos">1</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220538.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Albuquerque <small>REPUBLICANOS/RR</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 100.00%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/224117.html">
+            <span class="ranking__pos">2</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/224117.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Gabriel Mota <small>UNIÃO/RR</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 99.67%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/73486.html">
+            <span class="ranking__pos">3</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/73486.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Pompeo de Mattos <small>PDT/RS</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 99.53%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/220592.html">
+            <span class="ranking__pos">4</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220592.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Zezinho Barbary <small>PP/AC</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 98.95%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/220536.html">
+            <span class="ranking__pos">5</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220536.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Zé Haroldo Cathedral <small>UNIÃO/RR</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 98.62%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/220540.html">
+            <span class="ranking__pos">6</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220540.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Duda Ramos <small>PODE/RR</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 98.46%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/204479.html">
+            <span class="ranking__pos">7</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/204479.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Nicoletti <small>PL/RR</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 97.93%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/220537.html">
+            <span class="ranking__pos">8</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220537.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Helena Lima <small>PSD/RR</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 97.72%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/141459.html">
+            <span class="ranking__pos">9</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/141459.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">João Maia <small>PP/RN</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 97.32%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a class="ranking__item" href="deputado/74090.html">
+            <span class="ranking__pos">10</span>
+            <img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/74090.jpg" alt="" loading="lazy" width="48" height="48">
+            <span>
+                <span class="ranking__nome">Átila Lins <small>PSD/AM</small></span>
+                <div class="barra ">
+    <div class="barra__preenchimento" style="width: 96.42%"></div>
+    <div class="barra__valor">R$ 2,3 mi</div>
+</div>
+            </span>
+        </a>
+    </li>
+</ol>
+
+    </section>
+
+    <section class="caixa">
+        <h2 class="caixa__titulo">Gastos <span class="marca-texto">mais recentes</span></h2>
+        <ul class="feed">
+            <li class="feed__item">
+                <a href="deputado/178962.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/178962.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/178962.html">Carlos Gomes</a> <small>REPUBLICANOS/RS</small></span>
+                        <time class="feed__data" datetime="2026-11-18">18 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 1.985,00</span> em manutenção de escritório de apoio à atividade parlamentar
+· WMS COMERCIO DE ARTIGOS DE PAPELARIA LTDA                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 178.432,80</span>
+            <li class="feed__item">
+                <a href="deputado/160674.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/160674.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/160674.html">Hugo Motta</a> <small>REPUBLICANOS/PB</small></span>
+                        <time class="feed__data" datetime="2026-11-18">18 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 2.000,00</span> em divulgação da atividade parlamentar
+· RIC - REDE INTROMETIDAS DE COMUNICACAO LTDA                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 164.900,00</span>
+            <li class="feed__item">
+                <a href="deputado/220536.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220536.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/220536.html">Zé Haroldo Cathedral</a> <small>UNIÃO/RR</small></span>
+                        <time class="feed__data" datetime="2026-11-18">18 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 3.000,00</span> em combustíveis e lubrificantes
+· AUTO POSTO PREMIUM LTDA                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 150.960,00</span>
+            <li class="feed__item">
+                <a href="deputado/220682.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220682.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/220682.html">Tadeu Veneri</a> <small>PT/PR</small></span>
+                        <time class="feed__data" datetime="2026-11-17">17 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 2.335,00</span> em divulgação da atividade parlamentar
+· 31.078.235 REGIS JARDIM MENDES                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ LOCAÇÃO OU FRETAMENTO DE AERONAVES</span>
-                <span class="gasto-valor">R$ 149.500,00</span>
+            <li class="feed__item">
+                <a href="deputado/220544.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220544.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/220544.html">Antonio Andrade</a> <small>PSDB/TO</small></span>
+                        <time class="feed__data" datetime="2026-11-17">17 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 1.480,00</span> em combustíveis e lubrificantes
+· M COELHO PINTO LTDA                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 149.000,00</span>
+            <li class="feed__item">
+                <a href="deputado/204374.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/204374.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/204374.html">Bia Kicis</a> <small>PL/DF</small></span>
+                        <time class="feed__data" datetime="2026-11-16">16 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 6.000,00</span> em divulgação da atividade parlamentar
+· 59.748.176 NATHALIA PALANCA AGUIAR                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 148.500,00</span>
+            <li class="feed__item">
+                <a href="deputado/178871.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/178871.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/178871.html">Evair Vieira de Melo</a> <small>REPUBLICANOS/ES</small></span>
+                        <time class="feed__data" datetime="2026-11-16">16 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 2.499,11</span> em combustíveis e lubrificantes
+· AUTO POSTO ESMIG LTDA                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 140.000,00</span>
+            <li class="feed__item">
+                <a href="deputado/220617.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220617.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/220617.html">Murillo Gouvea</a> <small>PSDB/RJ</small></span>
+                        <time class="feed__data" datetime="2026-11-13">13 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 21.900,00</span> em divulgação da atividade parlamentar
+· ALPHA MARKETING E PESQUISA LTDA                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 140.000,00</span>
+            <li class="feed__item">
+                <a href="deputado/204410.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/204410.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/204410.html">Luisa Canziani</a> <small>UNIÃO/PR</small></span>
+                        <time class="feed__data" datetime="2026-11-13">13 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 2.730,00</span> em manutenção de escritório de apoio à atividade parlamentar
+· LUPE COFFEE MACCHINE LTDA                    </div>
+                </div>
             </li>
-            
-            <li>
-                <span class="gasto-tipo">⛽ DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.</span>
-                <span class="gasto-valor">R$ 130.000,00</span>
+            <li class="feed__item">
+                <a href="deputado/220669.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/220669.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/220669.html">Lula da Fonte</a> <small>PP/PE</small></span>
+                        <time class="feed__data" datetime="2026-11-13">13 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 18.970,42</span> em locação ou fretamento de veículos automotores
+· HPE LOCADORA DE VEICULOS LTDA                    </div>
+                </div>
             </li>
-            
+            <li class="feed__item">
+                <a href="deputado/81055.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/81055.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/81055.html">Márcio Jerry</a> <small>PCdoB/MA</small></span>
+                        <time class="feed__data" datetime="2026-11-12">12 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 2.046,00</span> em manutenção de escritório de apoio à atividade parlamentar
+· WMS COMERCIO DE ARTIGOS DE PAPELARIA LTDA                    </div>
+                </div>
+            </li>
+            <li class="feed__item">
+                <a href="deputado/178992.html" aria-hidden="true" tabindex="-1"><img class="foto " src="https://www.camara.leg.br/internet/deputado/bandep/178992.jpg" alt="" loading="lazy" width="48" height="48"></a>
+                <div>
+                    <div class="feed__topo">
+                        <span><a href="deputado/178992.html">Vitor Lippi</a> <small>PSD/SP</small></span>
+                        <time class="feed__data" datetime="2026-11-12">12 nov</time>
+                    </div>
+                    <div class="feed__texto">
+                        <span class="valor">R$ 1.081,17</span> em manutenção de escritório de apoio à atividade parlamentar
+· MUNICIPIO DE SOROCABA                    </div>
+                </div>
+            </li>
         </ul>
-    </div>
+        <p class="nota">Despesas acima de R$ 1.000,00 com data mais recente.</p>
+    </section>
+
+    <section class="caixa">
+        <h2 class="caixa__titulo">Onde o dinheiro foi em <span class="marca-texto">2026</span></h2>
+        <ul class="categorias">
+    <li>
+        <span>Divulgação da atividade parlamentar</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 100.00%"></div>
+    <div class="barra__valor">R$ 57,3 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Locação ou fretamento de veículos automotores</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 64.39%"></div>
+    <div class="barra__valor">R$ 36,9 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Passagem aérea - sigepa</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 60.74%"></div>
+    <div class="barra__valor">R$ 34,8 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Manutenção de escritório de apoio à atividade parlamentar</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 48.50%"></div>
+    <div class="barra__valor">R$ 27,8 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Combustíveis e lubrificantes</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 33.57%"></div>
+    <div class="barra__valor">R$ 19,2 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Hospedagem,exceto do parlamentar no distrito federal</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 6.99%"></div>
+    <div class="barra__valor">R$ 4,0 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Locação ou fretamento de aeronaves</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 4.61%"></div>
+    <div class="barra__valor">R$ 2,6 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Telefonia</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 3.77%"></div>
+    <div class="barra__valor">R$ 2,2 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Complementação do auxílio-moradia</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 2.35%"></div>
+    <div class="barra__valor">R$ 1,3 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Serviço de segurança prestado por empresa especializada</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 1.94%"></div>
+    <div class="barra__valor">R$ 1,1 mi</div>
+</div>
+    </li>
+    <li>
+        <span>Serviço de táxi, pedágio e estacionamento</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 1.60%"></div>
+    <div class="barra__valor">R$ 917 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Passagem aérea - reembolso</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 1.13%"></div>
+    <div class="barra__valor">R$ 648 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Fornecimento de alimentação do parlamentar</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.82%"></div>
+    <div class="barra__valor">R$ 467 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Passagem aérea - rpa</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.39%"></div>
+    <div class="barra__valor">R$ 223 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Locação ou fretamento de embarcações</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.34%"></div>
+    <div class="barra__valor">R$ 192 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Passagens terrestres, marítimas ou fluviais</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.21%"></div>
+    <div class="barra__valor">R$ 122 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Serviços postais</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.19%"></div>
+    <div class="barra__valor">R$ 107 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Passagem aérea - missão oficial</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.13%"></div>
+    <div class="barra__valor">R$ 73,0 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Assinatura de publicações</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.10%"></div>
+    <div class="barra__valor">R$ 60,1 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Participação em curso, palestra ou evento similar</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.02%"></div>
+    <div class="barra__valor">R$ 9,0 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Consultorias, pesquisas e trabalhos técnicos</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.01%"></div>
+    <div class="barra__valor">R$ 7,0 mil</div>
+</div>
+    </li>
+    <li>
+        <span>Aquisição de tokens e certificados digitais</span>
+        <div class="barra barra--clara">
+    <div class="barra__preenchimento" style="width: 0.01%"></div>
+    <div class="barra__valor">R$ 3,5 mil</div>
+</div>
+    </li>
+</ul>
+
+    </section>
+</div>
+        </div>
+    </main>
 
     <footer>
-        🔍 Dados públicos • Transparência é fundamental
+        <div class="container">
+            <span>Dados públicos da <a href="https://dadosabertos.camara.leg.br/">Câmara dos Deputados</a> · atualizados em 21/11/2026</span>
+            <a href="https://github.com/gacheiro/gastospoliticos">Código no GitHub</a>
+        </div>
     </footer>
-
+    <script src="static/filtros.js" defer></script>
 </body>
 
 </html>

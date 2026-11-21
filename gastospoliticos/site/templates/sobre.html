@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titulo %}Sobre · {% endblock %}
+
+{% block conteudo %}
+<div class="grade-2">
+    <section class="caixa texto">
+        <h1 class="caixa__titulo">Sobre o <span class="marca-texto">projeto</span></h1>
+        <p>O Gastos dos Políticos usa a API de
+            <a href="https://dadosabertos.camara.leg.br/">Dados Abertos da Câmara dos Deputados</a>
+            para mostrar os gastos dos deputados federais com a cota parlamentar.</p>
+        <p>O site é estático e é regenerado a partir dos dados da API. Esta versão traz
+            as despesas da {{ legislatura }}ª legislatura ({{ anos[0] }}–{{ anos[-1] }}).</p>
+        <p>O código é aberto. Sugestões e correções são bem-vindas no
+            <a href="https://github.com/gacheiro/gastospoliticos">GitHub</a>.</p>
+
+        <h2>Como os valores são calculados</h2>
+        <p>O valor de cada despesa é o valor do documento menos a glosa (a parte que
+            a Câmara não reembolsou). Valores negativos são créditos ou estornos.</p>
+        <p>Os dados brutos estão disponíveis em
+            <a href="dataframes/deputados.csv">deputados.csv</a> e
+            <a href="dataframes/gastos.csv.gz">gastos.csv.gz</a>.</p>
+    </section>
+
+    <section class="caixa texto">
+        <h2 class="caixa__titulo">Sobre a <span class="marca-texto">Cota Parlamentar</span></h2>
+        <p>A Cota para o Exercício da Atividade Parlamentar (CEAP) custeia despesas do
+            mandato, como passagens aéreas, combustível, telefone e divulgação. Algumas
+            são reembolsadas e outras são pagas diretamente pela Câmara.</p>
+        <p>Nos casos de reembolso, os deputados têm três meses para apresentar os recibos.
+            Por isso os meses mais recentes aparecem com valores menores do que terão
+            depois.</p>
+        <p>O valor mensal não utilizado se acumula ao longo do ano, o que explica meses
+            com gastos acima da média.</p>
+        <p>Todas as informações são públicas e também estão no
+            <a href="https://www.camara.leg.br/transparencia/gastos-parlamentares">portal da transparência da Câmara</a>.</p>
+    </section>
+</div>
+{% endblock %}
